@@ -1,0 +1,154 @@
+.wrapper {
+  padding: 25px 20px 10px 20px;
+}
+
+.half {
+  width: 50% !important;
+}
+
+.quarter {
+  width: 25% !important;
+}
+
+.wrapper h1 {
+  padding-bottom: 20px;
+  font-weight: 600;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: 1.025fr 1fr;
+  padding: 20px;
+  gap: 20px;
+}
+
+.pokemons-list {
+  display: flex;
+  align-items: flex-start;
+  align-items: center;
+  height: 120px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+
+.pokemons-list__img {
+  width: 125px;
+  margin-left: 15px;
+}
+
+.pokemons-list__info {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  flex-direction: column;
+  padding-left: 15px;
+  gap: 5px;
+}
+
+.pokemons-list__info div {
+  margin-bottom: 5px;
+}
+
+.pokemon-name {
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.pokemon-type {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.pokemon-id,
+.pokemon-email {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  .list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.type-filter {
+  position: relative;
+  flex: 1; /* Hace que ambos contenedores ocupen el mismo espacio */
+}
+
+.type-filter__trigger {
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  width: 100%;
+  padding: .5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  display: block;
+  height: 38px; 
+  padding: 0.375rem 0.75rem;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.type-filter__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 4px;
+  margin-top: 4px;
+  padding: 8px;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+}
+
+.type-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+}
+
+.type-btn--selected {
+  background: #e0e0e0;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch; /* Cambiado para alinear altura */
+  margin-bottom: 2rem;
+}
+
+.type-filter__trigger,
+.generation-dropdown,
+.form__input {  /* Añadimos el input de búsqueda */
+  height: 38px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.type-filter,
+.generation-filter,
+.search-filter {  /* Añadimos el contenedor del search */
+  flex: 1;
+}
