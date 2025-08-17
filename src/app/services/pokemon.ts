@@ -9,7 +9,7 @@ interface PokemonDetails {
 
 export const getPokemons = async (): Promise<PokemonDetails[]> => {
   try {
-    const response = await fetch(`${API_URL}/pokemon?limit=15`);
+    const response = await fetch(`${API_URL}/pokemon?limit=200`);
     const { results } = await response.json();
     
     const detailedPokemon = await Promise.all(
