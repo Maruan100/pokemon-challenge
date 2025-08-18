@@ -1,55 +1,65 @@
 'use client'
-
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import PokemonCard from './pokemon-card'
 import SearchBar from './search-bar'
 import GenerationDropdown from './drop-down'
 import TypeFilter from './type-filter'
+import { getPokemonEvolutionChain } from '../utils/getEvolution'
 
 interface PokemonListProps {
   initialPokemons: any[]
 }
 
 export default function PokemonList({ initialPokemons }: PokemonListProps) {
-  const [filteredPokemons, setFilteredPokemons] = useState(initialPokemons)
+  const [searchTerm, setSearchTerm] = useState('')
   const [selectedGeneration, setSelectedGeneration] = useState('all')
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
+  const [evolutionNames, setEvolutionNames] = useState<string[]>([])
 
-  // Función unificada para aplicar todos los filtros
-  const applyFilters = (search: string, generation: string, types: string[]) => {
-    const filtered = initialPokemons.filter(pokemon => {
-      // Filtro de búsqueda
-      const nameMatch = pokemon.name.toLowerCase().includes(search.toLowerCase())
-      
-      // Filtro de generación
-      const generationMatch = generation === 'all' || 
-                            pokemon.generation === `generation-${generation.toLowerCase()}`
-      
-      // Filtro de tipos
-      const typeMatch = types.length === 0 || 
-                      types.every(type => pokemon.types.includes(type))
-      
+  const filteredPokemons = useMemo(() => {
+    return initialPokemons.filter(pokemon => {
+      const name = pokemon.name.toLowerCase()
+      const query = searchTerm.toLowerCase()
+
+      const nameMatch = !query || 
+        name.includes(query) || 
+        evolutionNames.includes(name)
+
+      const generationMatch = selectedGeneration === 'all' || 
+        pokemon.generation === `generation-${selectedGeneration.toLowerCase()}`
+
+      const typeMatch = selectedTypes.length === 0 || 
+        selectedTypes.every(type => pokemon.types.includes(type))
+
       return nameMatch && generationMatch && typeMatch
     })
-    
-    setFilteredPokemons(filtered)
-  }
+  }, [initialPokemons, searchTerm, selectedGeneration, selectedTypes, evolutionNames])
 
-  const handleSearch = (search: string) => {
+  const handleSearch = useCallback(async (search: string) => {
     setSearchTerm(search)
-    applyFilters(search, selectedGeneration, selectedTypes)
-  }
+    
+    if (!search.trim()) {
+      setEvolutionNames([])
+      return
+    }
 
-  const handleGenerationChange = (generation: string) => {
-    setSelectedGeneration(generation)
-    applyFilters(searchTerm, generation, selectedTypes)
-  }
-
-  const handleTypeChange = (types: string[]) => {
-    setSelectedTypes(types)
-    applyFilters(searchTerm, selectedGeneration, types)
-  }
+    try {
+      const matchingPokemons = initialPokemons.filter(p => 
+        p.name.toLowerCase().includes(search.toLowerCase())
+      )
+      
+      const evolutionResults = await Promise.all(
+        matchingPokemons.map(pokemon => 
+          getPokemonEvolutionChain(pokemon.name.toLowerCase())
+        )
+      )
+      
+      setEvolutionNames([...new Set(evolutionResults.flat())])
+    } catch (error) {
+      console.error('Error obteniendo cadenas evolutivas:', error)
+      setEvolutionNames([])
+    }
+  }, [initialPokemons])
 
   return (
     <>
@@ -57,13 +67,13 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
         <h1>Pokedex</h1>
         <div className="filters">
           <SearchBar onSearch={handleSearch} />
-          <GenerationDropdown onGenerationChange={handleGenerationChange} />
-          <TypeFilter onTypeChange={handleTypeChange} />
+          <GenerationDropdown onGenerationChange={setSelectedGeneration} />
+          <TypeFilter onTypeChange={setSelectedTypes} />
         </div>
       </div>
 
       <div className="list">
-        {filteredPokemons.map((pokemon: any) => (
+        {filteredPokemons.map(pokemon => (
           <PokemonCard key={pokemon.id} pokemon={pokemon} />
         ))}
       </div>
