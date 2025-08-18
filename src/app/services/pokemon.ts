@@ -35,3 +35,16 @@ export const getPokemons = async (): Promise<PokemonDetails[]> => {
     return [];
   }
 }
+
+export const getPokemon = async (id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/pokemon/${id}`);
+    if (!response.ok) {
+      throw new Error(`Pokemon with ID ${id} not found`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching pokemon:', error);
+    return null;
+  }
+}
