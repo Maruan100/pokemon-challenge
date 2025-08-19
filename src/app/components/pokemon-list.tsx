@@ -4,13 +4,17 @@ import PokemonCard from "./pokemon-card";
 import SearchBar from "./search-bar";
 import GenerationDropdown from "./drop-down";
 import TypeFilter from "./type-filter";
+import Pagination from "./pagination";
 import { getPokemonEvolutionChain } from "../utils/getEvolution";
 import Link from "next/link";
 import { usePokemonFilters } from "../contexts/PokemonFilterContext";
+import { usePagination } from "../hooks/usePagination";
 
 interface PokemonListProps {
   initialPokemons: any[];
 }
+
+const ITEMS_PER_PAGE = 30;
 
 export default function PokemonList({ initialPokemons }: PokemonListProps) {
   const {
@@ -55,6 +59,18 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
     selectedTypes,
     evolutionNames,
   ]);
+
+  // Use pagination hook with reset triggers
+  const {
+    currentPage,
+    paginatedData: paginatedPokemons,
+    goToPage,
+    totalItems,
+  } = usePagination({
+    data: filteredPokemons,
+    itemsPerPage: ITEMS_PER_PAGE,
+    resetTriggers: [searchTerm, selectedGeneration, selectedTypes],
+  });
 
   const handleSearch = useCallback(
     async (search: string) => {
@@ -111,12 +127,20 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
       </div>
 
       <div className="list">
-        {filteredPokemons.map((pokemon) => (
+        {paginatedPokemons.map((pokemon) => (
           <Link key={pokemon.id} href={`/pokemon/${pokemon.id}`}>
             <PokemonCard key={pokemon.id} pokemon={pokemon} />
           </Link>
         ))}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={totalItems}
+        itemsPerPage={ITEMS_PER_PAGE}
+        onPageChange={goToPage}
+        showInfo={true}
+      />
     </>
   );
 }
