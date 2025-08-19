@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import './styles/globals.css'
+import { PokemonFilterProvider } from './contexts/PokemonFilterContext';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -12,8 +13,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        <PokemonFilterProvider>
+          {children}
+        </PokemonFilterProvider>
+      </body>
     </html>
   );
 }

@@ -1,34 +1,29 @@
 "use client";
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import PokemonCard from "./pokemon-card";
 import SearchBar from "./search-bar";
 import GenerationDropdown from "./drop-down";
 import TypeFilter from "./type-filter";
 import { getPokemonEvolutionChain } from "../utils/getEvolution";
 import Link from "next/link";
+import { usePokemonFilters } from "../contexts/PokemonFilterContext";
 
 interface PokemonListProps {
   initialPokemons: any[];
 }
 
 export default function PokemonList({ initialPokemons }: PokemonListProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedGeneration, setSelectedGeneration] = useState("all");
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [evolutionNames, setEvolutionNames] = useState<string[]>([]);
+  const {
+    searchTerm, 
+    setSearchTerm,
+    selectedGeneration, 
+    setSelectedGeneration,
+    selectedTypes, 
+    setSelectedTypes,
+    evolutionNames, 
+    setEvolutionNames
+  } = usePokemonFilters();
 
-  // Cargar valores iniciales del localStorage
-  useEffect(() => {
-    const savedSearch = localStorage.getItem('pokemonSearchTerm');
-    const savedGeneration = localStorage.getItem('pokemonGeneration');
-    const savedTypes = localStorage.getItem('pokemonTypes');
-
-    if (savedSearch) setSearchTerm(savedSearch);
-    if (savedGeneration) setSelectedGeneration(savedGeneration);
-    if (savedTypes) setSelectedTypes(JSON.parse(savedTypes));
-  }, []);
-
-  // Efecto para la búsqueda inicial
   useEffect(() => {
     if (searchTerm) {
       handleSearch(searchTerm);
@@ -87,16 +82,14 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
         setEvolutionNames([]);
       }
     },
-    [initialPokemons]
+    [initialPokemons, setSearchTerm, setEvolutionNames]
   );
 
   const handleGenerationChange = (generation: string) => {
-    localStorage.setItem('pokemonGeneration', generation);
     setSelectedGeneration(generation);
   };
 
   const handleTypeChange = (types: string[]) => {
-    localStorage.setItem('pokemonTypes', JSON.stringify(types));
     setSelectedTypes(types);
   };
 
