@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import './styles/globals.css'
-import { PokemonFilterProvider } from './contexts/PokemonFilterContext';
+import { PokemonFilterProvider } from './contexts/pokemon-filter-context';
 
 export const metadata: Metadata = {
   title: "Create Next App",

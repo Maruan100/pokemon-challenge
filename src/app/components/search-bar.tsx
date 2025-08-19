@@ -14,7 +14,7 @@ export default function SearchBar({ onSearch, initialValue = "" }: SearchBarProp
     <input
       className="form__input half"
       type="text"
-      placeholder="Buscar..."
+      placeholder="Search..."
       onChange={handleSearch}
       defaultValue={initialValue}
     />

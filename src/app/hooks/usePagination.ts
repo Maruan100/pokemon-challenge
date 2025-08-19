@@ -14,7 +14,6 @@ export function usePagination<T>({
 }: UsePaginationProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reset page when data changes or reset triggers change
   useEffect(() => {
     setCurrentPage(1);
   }, [data.length, ...resetTriggers]);

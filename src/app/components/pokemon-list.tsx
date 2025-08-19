@@ -5,9 +5,9 @@ import SearchBar from "./search-bar";
 import GenerationDropdown from "./drop-down";
 import TypeFilter from "./type-filter";
 import Pagination from "./pagination";
-import { getPokemonEvolutionChain } from "../utils/getEvolution";
+import { getPokemonEvolutionChain } from "../utils/get-evolution";
 import Link from "next/link";
-import { usePokemonFilters } from "../contexts/PokemonFilterContext";
+import { usePokemonFilters } from "../contexts/pokemon-filter-context";
 import { usePagination } from "../hooks/usePagination";
 
 interface PokemonListProps {
@@ -82,17 +82,15 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
       }
 
       try {
-        // Primero filtramos los Pokémon que coinciden con el término de búsqueda
         const matchingPokemons = initialPokemons.filter((p) =>
           p.name.toLowerCase().includes(search.toLowerCase())
         );
 
         if (matchingPokemons.length === 0) {
           setEvolutionNames([]);
-          return; // No hay coincidencias, no necesitamos buscar evoluciones
+          return;
         }
 
-        // Limitamos el número de peticiones para evitar saturar la API
         const pokemonsToProcess = matchingPokemons.slice(0, 5);
         
         const evolutionResults = await Promise.all(

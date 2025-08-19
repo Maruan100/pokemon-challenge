@@ -27,7 +27,7 @@ export default function GenerationDropdown({
       onChange={handleChange}
       value={selectedGeneration}
     >
-      <option value="all">Todas las generaciones</option>
+      <option value="all">All gens</option>
       <option value="i">Gen I</option>
       <option value="ii">Gen II</option>
       <option value="iii">Gen III</option>

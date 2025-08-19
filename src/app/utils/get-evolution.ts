@@ -4,13 +4,13 @@ export async function getPokemonEvolutionChain(pokemonName: string) {
   try {
     const name = pokemonName.toLowerCase().trim();
     const pokemonRes = await fetch(`${baseURL}/pokemon/${name}`);
-    if (!pokemonRes.ok) return []; // Si no encuentra el Pokémon, devolvemos un array vacío
+    if (!pokemonRes.ok) return []; 
     
     const pokemonData = await pokemonRes.json();
     
     if (!pokemonData.species?.url) {
       console.error('Datos de especies no disponibles para:', pokemonName);
-      return []; // Verificación adicional para asegurarnos de que species.url existe
+      return [];
     }
 
     const speciesRes = await fetch(pokemonData.species.url);
@@ -19,7 +19,7 @@ export async function getPokemonEvolutionChain(pokemonName: string) {
     const speciesData = await speciesRes.json();
     
     if (!speciesData.evolution_chain?.url) {
-      return [pokemonName]; // Si no tiene cadena evolutiva, devolvemos solo este Pokémon
+      return [pokemonName]; 
     }
 
     const evoChainRes = await fetch(speciesData.evolution_chain.url);
