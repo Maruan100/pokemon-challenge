@@ -23,84 +23,50 @@ export default function Pagination({
   const paginationData = useMemo(() => {
     if (totalPages <= 1) return null;
 
-    const pages = [];
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    const pages: (number | string)[] = [];
+    const sidePages = Math.floor(maxVisiblePages / 2);
+    let startPage = Math.max(2, currentPage - sidePages);
+    let endPage = Math.min(totalPages - 1, currentPage + sidePages);
+
+    if (currentPage <= sidePages + 1) {
+      endPage = Math.min(totalPages - 1, maxVisiblePages);
+    }
+    if (currentPage >= totalPages - sidePages) {
+      startPage = Math.max(2, totalPages - maxVisiblePages + 1);
     }
 
-    // Previous button
-    if (currentPage > 1) {
-      pages.push({
-        type: 'button',
-        key: 'prev',
-        page: currentPage - 1,
-        label: '←',
-        isActive: false,
-      });
-    }
+    pages.push(1);
+    if (startPage > 2) pages.push('...');
 
-    // First page
-    if (startPage > 1) {
-      pages.push({
-        type: 'button',
-        key: 1,
-        page: 1,
-        label: '1',
-        isActive: false,
-      });
-      if (startPage > 2) {
-        pages.push({
-          type: 'dots',
-          key: 'dots1',
-          label: '...',
-        });
-      }
-    }
-
-    // Page numbers
     for (let i = startPage; i <= endPage; i++) {
-      pages.push({
-        type: 'button',
-        key: i,
-        page: i,
-        label: i.toString(),
-        isActive: i === currentPage,
-      });
+      pages.push(i);
     }
 
-    // Last page
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
-        pages.push({
-          type: 'dots',
-          key: 'dots2',
-          label: '...',
-        });
-      }
-      pages.push({
-        type: 'button',
-        key: totalPages,
-        page: totalPages,
-        label: totalPages.toString(),
-        isActive: false,
-      });
-    }
+    if (endPage < totalPages - 1) pages.push('...');
+    if (totalPages > 1) pages.push(totalPages);
 
-    // Next button
+
+    const pageItems = pages.map((p, index) =>
+      typeof p === 'string'
+        ? { type: 'dots' as const, key: `dots-${index}`, label: '...' }
+        : {
+            type: 'button' as const,
+            key: p,
+            page: p,
+            label: p.toString(),
+            isActive: p === currentPage,
+          }
+    );
+
+
+    if (currentPage > 1) {
+      pageItems.unshift({ type: 'button', key: 'prev', page: currentPage - 1, label: '←', isActive: false });
+    }
     if (currentPage < totalPages) {
-      pages.push({
-        type: 'button',
-        key: 'next',
-        page: currentPage + 1,
-        label: '→',
-        isActive: false,
-      });
+      pageItems.push({ type: 'button', key: 'next', page: currentPage + 1, label: '→', isActive: false });
     }
 
-    return pages;
+    return pageItems;
   }, [currentPage, totalPages, maxVisiblePages]);
 
   const handlePageChange = (page: number) => {

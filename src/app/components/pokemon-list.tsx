@@ -82,14 +82,28 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
       }
 
       try {
+        // Primero filtramos los Pokémon que coinciden con el término de búsqueda
         const matchingPokemons = initialPokemons.filter((p) =>
           p.name.toLowerCase().includes(search.toLowerCase())
         );
 
+        if (matchingPokemons.length === 0) {
+          setEvolutionNames([]);
+          return; // No hay coincidencias, no necesitamos buscar evoluciones
+        }
+
+        // Limitamos el número de peticiones para evitar saturar la API
+        const pokemonsToProcess = matchingPokemons.slice(0, 5);
+        
         const evolutionResults = await Promise.all(
-          matchingPokemons.map((pokemon) =>
-            getPokemonEvolutionChain(pokemon.name.toLowerCase())
-          )
+          pokemonsToProcess.map(async (pokemon) => {
+            try {
+              return await getPokemonEvolutionChain(pokemon.name.toLowerCase());
+            } catch (e) {
+              console.error(`Error procesando evolución de ${pokemon.name}:`, e);
+              return [];
+            }
+          })
         );
 
         setEvolutionNames([...new Set(evolutionResults.flat())]);
