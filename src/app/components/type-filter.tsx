@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface TypeFilterProps {
-  onTypeChange: (selectedTypes: string[]) => void
+  onTypeChange: (selectedTypes: string[]) => void;
+  initialTypes?: string[];
 }
 
 const POKEMON_TYPES = [
@@ -10,26 +11,31 @@ const POKEMON_TYPES = [
   'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
 ]
 
-export default function TypeFilter({ onTypeChange }: TypeFilterProps) {
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-  const [isOpen, setIsOpen] = useState(false)
+export default function TypeFilter({ onTypeChange, initialTypes = [] }: TypeFilterProps) {
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(initialTypes);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Actualizamos los tipos seleccionados cuando cambien los initialTypes
+  useEffect(() => {
+    setSelectedTypes(initialTypes);
+  }, [initialTypes]);
 
   const handleTypeChange = (type: string) => {
-    let newSelectedTypes: string[]
+    let newSelectedTypes: string[];
     
     if (selectedTypes.includes(type)) {
-      newSelectedTypes = selectedTypes.filter(t => t !== type)
+      newSelectedTypes = selectedTypes.filter(t => t !== type);
     } else {
       if (selectedTypes.length >= 2) {
-        newSelectedTypes = [selectedTypes[1], type]
+        newSelectedTypes = [selectedTypes[1], type];
       } else {
-        newSelectedTypes = [...selectedTypes, type]
+        newSelectedTypes = [...selectedTypes, type];
       }
     }
     
-    setSelectedTypes(newSelectedTypes)
-    onTypeChange(newSelectedTypes)
-  }
+    setSelectedTypes(newSelectedTypes);
+    onTypeChange(newSelectedTypes);
+  };
 
   return (
     <div className="type-filter quarter">
@@ -54,5 +60,5 @@ export default function TypeFilter({ onTypeChange }: TypeFilterProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

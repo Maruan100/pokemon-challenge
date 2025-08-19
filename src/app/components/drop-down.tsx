@@ -1,13 +1,31 @@
+import { useEffect, useState } from 'react';
+
 interface GenerationDropdownProps {
-  onGenerationChange: (generation: string) => void
+  onGenerationChange: (generation: string) => void;
+  initialValue?: string;
 }
 
-export default function GenerationDropdown({ onGenerationChange }: GenerationDropdownProps) {
+export default function GenerationDropdown({ 
+  onGenerationChange, 
+  initialValue = "all" 
+}: GenerationDropdownProps) {
+  const [selectedGeneration, setSelectedGeneration] = useState(initialValue);
+
+  useEffect(() => {
+    setSelectedGeneration(initialValue);
+  }, [initialValue]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedGeneration(value);
+    onGenerationChange(value);
+  };
+
   return (
     <select 
       className="generation-dropdown quarter"
-      onChange={(e) => onGenerationChange(e.target.value)}
-      defaultValue="all"
+      onChange={handleChange}
+      value={selectedGeneration}
     >
       <option value="all">Todas las generaciones</option>
       <option value="i">Gen I</option>
@@ -20,5 +38,5 @@ export default function GenerationDropdown({ onGenerationChange }: GenerationDro
       <option value="viii">Gen VIII</option>
       <option value="ix">Gen IX</option>
     </select>
-  )
+  );
 }

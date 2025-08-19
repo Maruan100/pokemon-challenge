@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import PokemonCard from "./pokemon-card";
 import SearchBar from "./search-bar";
 import GenerationDropdown from "./drop-down";
@@ -16,6 +16,24 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
   const [selectedGeneration, setSelectedGeneration] = useState("all");
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [evolutionNames, setEvolutionNames] = useState<string[]>([]);
+
+  // Cargar valores iniciales del localStorage
+  useEffect(() => {
+    const savedSearch = localStorage.getItem('pokemonSearchTerm');
+    const savedGeneration = localStorage.getItem('pokemonGeneration');
+    const savedTypes = localStorage.getItem('pokemonTypes');
+
+    if (savedSearch) setSearchTerm(savedSearch);
+    if (savedGeneration) setSelectedGeneration(savedGeneration);
+    if (savedTypes) setSelectedTypes(JSON.parse(savedTypes));
+  }, []);
+
+  // Efecto para la búsqueda inicial
+  useEffect(() => {
+    if (searchTerm) {
+      handleSearch(searchTerm);
+    }
+  }, [searchTerm]);
 
   const filteredPokemons = useMemo(() => {
     return initialPokemons.filter((pokemon) => {
@@ -72,14 +90,30 @@ export default function PokemonList({ initialPokemons }: PokemonListProps) {
     [initialPokemons]
   );
 
+  const handleGenerationChange = (generation: string) => {
+    localStorage.setItem('pokemonGeneration', generation);
+    setSelectedGeneration(generation);
+  };
+
+  const handleTypeChange = (types: string[]) => {
+    localStorage.setItem('pokemonTypes', JSON.stringify(types));
+    setSelectedTypes(types);
+  };
+
   return (
     <>
       <div className="wrapper">
         <h1>Pokedex</h1>
         <div className="filters">
-          <SearchBar onSearch={handleSearch} />
-          <GenerationDropdown onGenerationChange={setSelectedGeneration} />
-          <TypeFilter onTypeChange={setSelectedTypes} />
+          <SearchBar onSearch={handleSearch} initialValue={searchTerm} />
+          <GenerationDropdown 
+            onGenerationChange={handleGenerationChange} 
+            initialValue={selectedGeneration}
+          />
+          <TypeFilter 
+            onTypeChange={handleTypeChange} 
+            initialTypes={selectedTypes}
+          />
         </div>
       </div>
 

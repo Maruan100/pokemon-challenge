@@ -1,12 +1,14 @@
 interface SearchBarProps {
   onSearch: (searchTerm: string) => void;
+  initialValue?: string;
 }
 
-export default function SearchBar({ onSearch }: SearchBarProps) {
+export default function SearchBar({ onSearch, initialValue = "" }: SearchBarProps) {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value.toLowerCase()
-    onSearch(searchTerm)
-  }
+    const searchTerm = e.target.value.toLowerCase();
+    localStorage.setItem('pokemonSearchTerm', searchTerm);
+    onSearch(searchTerm);
+  };
 
   return (
     <input
@@ -14,6 +16,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
       type="text"
       placeholder="Buscar..."
       onChange={handleSearch}
+      defaultValue={initialValue}
     />
-  )
+  );
 }
