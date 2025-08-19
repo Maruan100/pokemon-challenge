@@ -15,7 +15,6 @@ export default function TypeFilter({ onTypeChange, initialTypes = [] }: TypeFilt
   const [selectedTypes, setSelectedTypes] = useState<string[]>(initialTypes);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Actualizamos los tipos seleccionados cuando cambien los initialTypes
   useEffect(() => {
     setSelectedTypes(initialTypes);
   }, [initialTypes]);
